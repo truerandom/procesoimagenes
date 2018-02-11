@@ -7,7 +7,6 @@
 				imgurl = document.getElementById('urltxt').value;
 				img.src = imgurl;
 				var ctebrillo = document.getElementById('brillotxt').value;
-				alert(ctebrillo);
 				var canvas = document.getElementById('canvas');
 				canvas.height = img.height;
 				canvas.width = img.width;
@@ -33,8 +32,6 @@
 				var imgurl = '';
 				imgurl = document.getElementById('urltxt').value;
 				img.src = imgurl;
-				var ctebrillo = document.getElementById('brillotxt').value;
-				alert(ctebrillo);
 				var canvas = document.getElementById('canvas');
 				canvas.height = img.height;
 				canvas.width = img.width;
@@ -70,8 +67,6 @@
 				var imgurl = '';
 				imgurl = document.getElementById('urltxt').value;
 				img.src = imgurl;
-				var ctebrillo = document.getElementById('brillotxt').value;
-				alert(ctebrillo);
 				var canvas = document.getElementById('canvas');
 				canvas.height = img.height;
 				canvas.width = img.width;
@@ -81,21 +76,39 @@
 				var data = imageData.data;
 				var actual = 0;
 				for (var i = 0; i < data.length; i += 4) {
-					if(r == 1){
-						actual = data[i]; // red
-					}
-					if(g==1){
-						actual = data[i + 1]; // green	
-					}
-					if(b==1){
-						actual = data[i+2];
-					}
+					if(r == 1){ actual = data[i]; }
+					if(g==1){ actual = data[i + 1]; }
+					if(b==1){ actual = data[i+2]; }
 					data[i] = actual;
 					data[i + 1] = actual; // green
 					data[i + 2] = actual; // blue
 				}
 				ctx.putImageData(imageData, 0, 0);
 			}
+			
+			function grisPromedio(){
+				var img = new Image();
+				var imgurl = '';
+				imgurl = document.getElementById('urltxt').value;
+				img.src = imgurl;
+				var canvas = document.getElementById('canvas');
+				canvas.height = img.height;
+				canvas.width = img.width;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0);
+				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				var data = imageData.data;
+				var actual = 0;
+				for (var i = 0; i < data.length; i += 4) {
+					actual = (data[i] + data[i+1] + data[i+2]) / 3
+					data[i] = actual;
+					data[i + 1] = actual; // green
+					data[i + 2] = actual; // blue
+				}
+				ctx.putImageData(imageData, 0, 0);
+			}
+			
+			
 			
 		</script>
 	</head>
@@ -112,6 +125,7 @@
 			<input id="testbtn" value="GrisRojo" type="button" onclick="grisRojo();"/>
 			<input id="testbtn" value="GrisVerde" type="button" onclick="grisVerde();"/>
 			<input id="testbtn" value="GrisAzul" type="button" onclick="grisAzul();"/>
+			<input id="testbtn" value="GrisPromedio" type="button" onclick="grisPromedio();"/>
 		</div>
 		<canvas id="canvas"></canvas>
 	</body>
