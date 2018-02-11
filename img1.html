@@ -170,34 +170,29 @@
 				var blocksize = parseInt(blockx)*parseInt(blocky);
 				var numbloques = Math.floor(data.length / (blocksize*4));
 				var pxrestantes = data.length % (blocksize*4);
-				alert("el block size ");
-				alert(blocksize);
-				alert("data length");
-				alert(data.length);
-				alert("numbloques");
-				alert(numbloques);
+				alert("el block size "+blocksize+"dlen "+data.length+" numbloq "+numbloques);
 				var actualx = 0;
 				var actualy = 0;
 				var actualz = 0;
+				var iant = 0;
 				for (var i = 0; i < data.length; i += 4) {
 					//alert("block "+blocksize+"i"+i);
 					actualx+=data[i];
 					actualy+=data[i+1];
 					actualz+=data[i+2];
 					if(i % (blocksize*4) == 0 && i>0){
+						//alert("i ant "+iant+" i " +i);
 						actualx=actualx/blocksize;
 						actualy=actualy/blocksize;
 						actualz=actualz/blocksize;
-						//alert(actualx);
-						//alert(actualy);
-						//alert(actualz);
-						for(var j = 0; j<blocksize;j+=4){
-							var idx = (i/4)-j;
+						for(var j = i; j>iant;j-=4){
+							var idx = j;
 							//alert(idx);
-							data[idx] = actualx;
-							data[idx+1] = data[idx+1];
-							data[idx+2] = data[idx+2];
+							data[idx-3] = actualx;
+							data[idx-2] = actualy;
+							data[idx-1] = actualz;
 						}
+						iant = i;
 					}
 				}
 				ctx.putImageData(imageData, 0, 0);
