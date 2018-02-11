@@ -24,16 +24,9 @@
 				ctx.putImageData(imageData, 0, 0);
 			}
 			
-			function rojo(){
-				filtraColor(1,0,0);
-			}
-			
-			function verde(){
-				filtraColor(0,1,0);
-			}
-			function azul(){
-				filtraColor(0,0,1);
-			}
+			function rojo(){ filtraColor(1,0,0); }
+			function verde(){ filtraColor(0,1,0); }
+			function azul(){ filtraColor(0,0,1); }
 			
 			function filtraColor(r,g,b){
 				var img = new Image();
@@ -68,6 +61,42 @@
 				}
 				ctx.putImageData(imageData, 0, 0);
 			}
+			
+			function grisRojo(){ grisRGB(1,0,0); }
+			function grisVerde(){ grisRGB(0,1,0); }
+			function grisAzul(){ grisRGB(0,0,1); }
+			function grisRGB(r,g,b){
+				var img = new Image();
+				var imgurl = '';
+				imgurl = document.getElementById('urltxt').value;
+				img.src = imgurl;
+				var ctebrillo = document.getElementById('brillotxt').value;
+				alert(ctebrillo);
+				var canvas = document.getElementById('canvas');
+				canvas.height = img.height;
+				canvas.width = img.width;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0);
+				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				var data = imageData.data;
+				var actual = 0;
+				for (var i = 0; i < data.length; i += 4) {
+					if(r == 1){
+						actual = data[i]; // red
+					}
+					if(g==1){
+						actual = data[i + 1]; // green	
+					}
+					if(b==1){
+						actual = data[i+2];
+					}
+					data[i] = actual;
+					data[i + 1] = actual; // green
+					data[i + 2] = actual; // blue
+				}
+				ctx.putImageData(imageData, 0, 0);
+			}
+			
 		</script>
 	</head>
 	<body>
@@ -79,6 +108,10 @@
 			<input id="testbtn" value="Rojo" type="button" onclick="rojo();"/>
 			<input id="testbtn" value="Verde" type="button" onclick="verde();"/>
 			<input id="testbtn" value="Azul" type="button" onclick="azul();"/>
+			<br>Grises:
+			<input id="testbtn" value="GrisRojo" type="button" onclick="grisRojo();"/>
+			<input id="testbtn" value="GrisVerde" type="button" onclick="grisVerde();"/>
+			<input id="testbtn" value="GrisAzul" type="button" onclick="grisAzul();"/>
 		</div>
 		<canvas id="canvas"></canvas>
 	</body>
