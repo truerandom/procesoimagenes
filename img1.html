@@ -130,12 +130,88 @@
 				ctx.putImageData(imageData, 0, 0);
 			}
 			
+			function grisEc(){
+				var img = new Image();
+				var imgurl = '';
+				imgurl = document.getElementById('urltxt').value;
+				img.src = imgurl;
+				var canvas = document.getElementById('canvas');
+				canvas.height = img.height;
+				canvas.width = img.width;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0);
+				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				var data = imageData.data;
+				var actual = 0;
+				for (var i = 0; i < data.length; i += 4) {
+					actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+					data[i] = actual;
+					data[i + 1] = actual; // green
+					data[i + 2] = actual; // blue
+				}
+				ctx.putImageData(imageData, 0, 0);
+			}
+			
+			function mosaico(){
+				var img = new Image();
+				var imgurl = '';
+				imgurl = document.getElementById('urltxt').value;
+				img.src = imgurl;
+				var canvas = document.getElementById('canvas');
+				canvas.height = img.height;
+				canvas.width = img.width;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0);
+				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				var data = imageData.data;
+				var actual = 0;
+				var blockx = document.getElementById('mosaicoxtxt').value;
+				var blocky = document.getElementById('mosaicoytxt').value;
+				var blocksize = parseInt(blockx)*parseInt(blocky);
+				var numbloques = Math.floor(data.length / (blocksize*4));
+				var pxrestantes = data.length % (blocksize*4);
+				alert("el block size ");
+				alert(blocksize);
+				alert("data length");
+				alert(data.length);
+				alert("numbloques");
+				alert(numbloques);
+				var actualx = 0;
+				var actualy = 0;
+				var actualz = 0;
+				for (var i = 0; i < data.length; i += 4) {
+					//alert("block "+blocksize+"i"+i);
+					actualx+=data[i];
+					actualy+=data[i+1];
+					actualz+=data[i+2];
+					if(i % (blocksize*4) == 0 && i>0){
+						actualx=actualx/blocksize;
+						actualy=actualy/blocksize;
+						actualz=actualz/blocksize;
+						//alert(actualx);
+						//alert(actualy);
+						//alert(actualz);
+						for(var j = 0; j<blocksize;j+=4){
+							var idx = (i/4)-j;
+							//alert(idx);
+							data[idx] = actualx;
+							data[idx+1] = data[idx+1];
+							data[idx+2] = data[idx+2];
+						}
+					}
+				}
+				ctx.putImageData(imageData, 0, 0);
+			}
 		</script>
 	</head>
 	<body>
 		<div>
 			Url
 			<input type="text" id="urltxt" name="urltxt" size=60><br>
+			<br>Mosaico
+			<input type="text" id="mosaicoxtxt" name="mosaicoxtxt" size=2>
+			<input type="text" id="mosaicoytxt" name="mosaicoytxt" size=2>
+			<input id="testbtn" value="Mosaico" type="button" onclick="mosaico();"/>
 			Brillo: <input type="text" id="brillotxt" name="brillotxt" size=4>
 			<input id="testbtn" value="" type="button" onclick="brillo();"/>
 			<input id="testbtn" value="Rojo" type="button" onclick="rojo();"/>
@@ -145,8 +221,8 @@
 			<input id="testbtn" value="GrisVerde" type="button" onclick="grisVerde();"/>
 			<input id="testbtn" value="GrisAzul" type="button" onclick="grisAzul();"/>
 			<input id="testbtn" value="GrisPromedio" type="button" onclick="grisPromedio();"/>
-			<input id="testbtn" value="GrisPromedio" type="button" onclick="grisEc();"/>
-			<br>Mosaico
+			<input id="testbtn" value="GrisEcuacion" type="button" onclick="grisEc();"/>
+			
 		</div>
 		<canvas id="canvas"></canvas>
 	</body>
