@@ -108,7 +108,27 @@
 				ctx.putImageData(imageData, 0, 0);
 			}
 			
-			
+			function grisEc(){
+				var img = new Image();
+				var imgurl = '';
+				imgurl = document.getElementById('urltxt').value;
+				img.src = imgurl;
+				var canvas = document.getElementById('canvas');
+				canvas.height = img.height;
+				canvas.width = img.width;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0);
+				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				var data = imageData.data;
+				var actual = 0;
+				for (var i = 0; i < data.length; i += 4) {
+					actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+					data[i] = actual;
+					data[i + 1] = actual; // green
+					data[i + 2] = actual; // blue
+				}
+				ctx.putImageData(imageData, 0, 0);
+			}
 			
 		</script>
 	</head>
@@ -121,11 +141,12 @@
 			<input id="testbtn" value="Rojo" type="button" onclick="rojo();"/>
 			<input id="testbtn" value="Verde" type="button" onclick="verde();"/>
 			<input id="testbtn" value="Azul" type="button" onclick="azul();"/>
-			<br>Grises:
 			<input id="testbtn" value="GrisRojo" type="button" onclick="grisRojo();"/>
 			<input id="testbtn" value="GrisVerde" type="button" onclick="grisVerde();"/>
 			<input id="testbtn" value="GrisAzul" type="button" onclick="grisAzul();"/>
 			<input id="testbtn" value="GrisPromedio" type="button" onclick="grisPromedio();"/>
+			<input id="testbtn" value="GrisPromedio" type="button" onclick="grisEc();"/>
+			<br>Mosaico
 		</div>
 		<canvas id="canvas"></canvas>
 	</body>
