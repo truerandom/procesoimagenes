@@ -160,42 +160,38 @@
 				var canvas = document.getElementById('canvas');
 				canvas.height = img.height;
 				canvas.width = img.width;
+				var ancho = img.width;
+				alert('anchox');
 				var ctx = canvas.getContext('2d');
 				ctx.drawImage(img, 0, 0);
 				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				var data = imageData.data;
-				var actual = 0;
 				var blockx = document.getElementById('mosaicoxtxt').value;
 				var blocky = document.getElementById('mosaicoytxt').value;
+				alert('blocky');
 				var blocksize = parseInt(blockx)*parseInt(blocky);
-				var numbloques = Math.floor(data.length / (blocksize*4));
+				var dlen = data.length / 4 ;
+				var numbloques = dlen/blocksize;
 				var pxrestantes = data.length % (blocksize*4);
 				alert("el block size "+blocksize+"dlen "+data.length+" numbloq "+numbloques);
-				var actualx = 0;
-				var actualy = 0;
-				var actualz = 0;
 				var iant = 0;
-				for (var i = 0; i < data.length; i += 4) {
-					//alert("block "+blocksize+"i"+i);
-					actualx+=data[i];
-					actualy+=data[i+1];
-					actualz+=data[i+2];
-					if(i % (blocksize*4) == 0 && i>0){
-						//alert("i ant "+iant+" i " +i);
-						actualx=actualx/blocksize;
-						actualy=actualy/blocksize;
-						actualz=actualz/blocksize;
-						for(var j = i; j>iant;j-=4){
-							var idx = j;
-							//alert(idx);
-							data[idx-3] = actualx;
-							data[idx-2] = actualy;
-							data[idx-1] = actualz;
+				var nose = 0;
+				for(var it = 0 ; it< numbloques;it+=1){
+					for (var x = 0; x < blockx; x += 1) {
+						for(var y=0; y<blockx; y+=1){
+							//alert("x "+x+" y "+y);
+							//0 1 10 11
+							//2 3 12 13
+							// pidx(0) => 0 , p(1)=> 4, p(2)=>8
+							var pxid =(x * ancho + y) + nose*blockx;
+							pxid*=4;
+							//como cada pixel se encuentra en su indice * 4 entonces pxid*=4
+							alert("x "+x+" y "+y+" it "+it+" blockx "+blockx+" ancho "+ancho+" pxid "+pxid);
 						}
-						iant = i;
 					}
+					nose+=1;
 				}
-				ctx.putImageData(imageData, 0, 0);
+				//ctx.putImageData(imageData, 0, 0);
 			}
 		</script>
 	</head>
