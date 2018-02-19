@@ -168,15 +168,18 @@
 				var data = imageData.data;
 				var blockx = document.getElementById('mosaicoxtxt').value;
 				var blocky = document.getElementById('mosaicoytxt').value;
-				alert('blocky');
-				var blocksize = parseInt(blockx)*parseInt(blocky);
+				var blocksize = parseInt(blockx)*parseInt(blockx);
 				var dlen = data.length / 4 ;
 				var numbloques = dlen/blocksize;
 				var pxrestantes = data.length % (blocksize*4);
 				alert("el block size "+blocksize+"dlen "+data.length+" numbloq "+numbloques);
 				var iant = 0;
 				var nose = 0;
-				for(var it = 0 ; it< numbloques;it+=1){
+				actr = 0;
+				actg = 0;
+				actb = 0;
+				var idxs = [];
+				for(var it = 0 ; it<= numbloques;it+=1){
 					for (var x = 0; x < blockx; x += 1) {
 						for(var y=0; y<blockx; y+=1){
 							//alert("x "+x+" y "+y);
@@ -186,12 +189,29 @@
 							var pxid =(x * ancho + y) + nose*blockx;
 							pxid*=4;
 							//como cada pixel se encuentra en su indice * 4 entonces pxid*=4
-							alert("x "+x+" y "+y+" it "+it+" blockx "+blockx+" ancho "+ancho+" pxid "+pxid);
+							actr+=data[pxid];
+							actg+=data[pxid+1];
+							actb+=data[pxid+2];
+							idxs.push(pxid);
+							//alert("x "+x+" y "+y+" it "+it+" blockx "+blockx+" ancho "+ancho+" pxid "+pxid);
 						}
 					}
+					actr = actr/(blockx*blockx);
+					actg = actg/(blockx*blockx);
+					actb = actb/(blockx*blockx);
+					for(var idxar=0;idxar<idxs.length;idxar+=1){
+						//alert(idxs[idxar]);
+						data[idxs[idxar]] = actr;
+						data[idxs[idxar]+1] = actg;
+						data[idxs[idxar]+2] = actb;
+					}
+					idxs = [];
+					actr = 0;
+					actg = 0;
+					actb = 0;
 					nose+=1;
 				}
-				//ctx.putImageData(imageData, 0, 0);
+				ctx.putImageData(imageData, 0, 0);
 			}
 		</script>
 	</head>
