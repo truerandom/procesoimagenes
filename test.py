@@ -35,5 +35,5 @@ def mosaico_aux(box):
 	for w in range(0, box.width):
 		for h in range(0, box.height):
 			pixels[w,h] = (r,g,b)
-	
-mosaico("dranzer.jpg",10,10)
+# COleSec.inventedtheinternet.com
+mosaico("char.png",5,5)
