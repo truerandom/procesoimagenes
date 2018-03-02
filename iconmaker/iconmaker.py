@@ -1,4 +1,5 @@
 from PIL import Image
+# donde tamx tamy son las dimensiones
 def mosaico(imgname,tamx,tamy):
 	im = Image.open(imgname)
 	# p1 = (x1,y1),p2=(x2,y2) donde lo recortado es un rectangulo con esq opuestas p1 y p2
