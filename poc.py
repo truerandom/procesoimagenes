@@ -33,6 +33,13 @@ class MyForm(wx.Frame):
 		# gris azul
 		grisazulMenuItem = filtrosMenu.Append(wx.NewId(), "GrisAzul","Open Image")
 		self.Bind(wx.EVT_MENU, self.onGrisAzul,grisazulMenuItem)
+		# filtros por color
+		rojoMenuItem = filtrosMenu.Append(wx.NewId(), "FiltroRojo","Open Image")
+		self.Bind(wx.EVT_MENU, self.onRojo,rojoMenuItem)
+		verdeMenuItem = filtrosMenu.Append(wx.NewId(), "FiltroVerde","Open Image")
+		self.Bind(wx.EVT_MENU, self.onVerde,verdeMenuItem)
+		azulMenuItem = filtrosMenu.Append(wx.NewId(), "FiltroAzul","Open Image")
+		self.Bind(wx.EVT_MENU, self.onAzul,azulMenuItem)
 		# mosaico
 		mosaicoMenuItem = filtrosMenu.Append(wx.NewId(), "Mosaico","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onMosaico,mosaicoMenuItem)
@@ -54,17 +61,41 @@ class MyForm(wx.Frame):
 			fgs.Add(sb1)
 			self.panel.SetSizerAndFit(fgs)
 			self.Fit()
-			
-	def onGrisRojo(self,event):
-		print 'gris rojo'
-		self.onGrisRGB(1,0,0)	
+	
+	def onRojo(self,event): self.filtroRGB(1,0,0)
+	def onVerde(self,event): self.filtroRGB(0,1,0)
+	def onAzul(self,event): self.filtroRGB(0,0,1)
 		
-	def onGrisVerde(self,event):
-		print 'gris verde' 
-		self.onGrisRGB(0,1,0)
-	def onGrisAzul(self,event):
-		print 'grisazul'
-		self.onGrisRGB(0,0,1)
+	def filtroRGB(self,rx,gx,bx):
+		im = Image.open(self.filename)
+		pixels = im.load()
+		for w in range(0, im.width):
+			for h in range(0, im.height):
+				r= im.getpixel((w,h))[0]
+				g= im.getpixel((w,h))[1]
+				b= im.getpixel((w,h))[2]
+				prom1,prom2,prom3 = (0,0,0)
+				#actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+				if rx == 1: prom1= r
+				if gx == 1: prom2 = g
+				if bx == 1: prom3 = b
+				pixels[w,h] = (prom1,prom2,prom3)
+		# convertimos la imagen de pil a raster
+		image = wx.EmptyImage(im.size[0], im.size[1])
+		new_image = im.convert('RGB')
+		data = new_image.tobytes()
+		image.SetData(data)
+		# fin conversion
+		fgs = wx.FlexGridSizer(cols=1, hgap=10, vgap=10)
+		sb1 = wx.StaticBitmap(self.panel, -1, wx.BitmapFromImage(image))
+		fgs.Add(sb1)
+		self.panel.SetSizerAndFit(fgs)
+		self.Fit()
+		self.Refresh()
+		
+	def onGrisRojo(self,event):self.onGrisRGB(1,0,0)	
+	def onGrisVerde(self,event): self.onGrisRGB(0,1,0)
+	def onGrisAzul(self,event): self.onGrisRGB(0,0,1)
 		
 	def onGrisRGB(self,rx,gx,bx):
 		im = Image.open(self.filename)
