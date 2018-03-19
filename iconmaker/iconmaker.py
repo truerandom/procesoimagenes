@@ -1,6 +1,7 @@
+import sys
 from PIL import Image
 # donde tamx tamy son las dimensiones
-def mosaico(imgname,tamx,tamy):
+def icon(imgname,tamx,tamy):
 	im = Image.open(imgname)
 	# p1 = (x1,y1),p2=(x2,y2) donde lo recortado es un rectangulo con esq opuestas p1 y p2
 	# itero x con i , y se queda fija, esto mientras haya bloques de x, ie tamx*iteracion < anchodela imagen
@@ -15,7 +16,7 @@ def mosaico(imgname,tamx,tamy):
 			box = (xant,yant,xant+tamx,yant+tamy)
 			region = im.crop(box)
 			region = region.transpose(Image.ROTATE_180)
-			mosaico_aux(region)
+			icon_aux(region)
 			#region = mosaico_aux(region)
 			im.paste(region, box)
 			xant+=tamx
@@ -23,7 +24,7 @@ def mosaico(imgname,tamx,tamy):
 		yant+=tamy
 	im.show()
 
-def mosaico_aux(box):
+def icon_aux(box):
 	pixels = box.load()
 	tambox =  box.width*box.height
 	r,g,b=(0,0,0)
@@ -38,4 +39,4 @@ def mosaico_aux(box):
 			pixels[w,h] = (r,g,b)
 			
 # COleSec.inventedtheinternet.com
-mosaico("char.png",5,5)
+icon(sys.argv[1],int(sys.argv[2]),int(sys.argv[2]))

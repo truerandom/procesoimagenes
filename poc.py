@@ -10,13 +10,13 @@ class MyForm(wx.Frame):
 		
 	def setMenu(self):
 		menuBar = wx.MenuBar()
-		
+		# menus
 		fileMenu = wx.Menu()
 		abrirMenuItem = fileMenu.Append(wx.NewId(), "Abrir","Open Image")
 		self.Bind(wx.EVT_MENU, self.onAbrir, abrirMenuItem)
 		exitMenuItem = fileMenu.Append(wx.NewId(), "Exit","Exit the application")
 		self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
-		
+		# opciones de menu
 		filtrosMenu = wx.Menu()
 		# grispromedio
 		grispromedioMenuItem = filtrosMenu.Append(wx.NewId(), "GrisPromedio","Open Image")
@@ -40,6 +40,9 @@ class MyForm(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.onVerde,verdeMenuItem)
 		azulMenuItem = filtrosMenu.Append(wx.NewId(), "FiltroAzul","Open Image")
 		self.Bind(wx.EVT_MENU, self.onAzul,azulMenuItem)
+		# icon 
+		iconMenuItem = filtrosMenu.Append(wx.NewId(), "ToIcon","Open Image")
+		self.Bind(wx.EVT_MENU, self.onIcon,iconMenuItem)
 		# mosaico
 		mosaicoMenuItem = filtrosMenu.Append(wx.NewId(), "Mosaico","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onMosaico,mosaicoMenuItem)
@@ -62,10 +65,57 @@ class MyForm(wx.Frame):
 			self.panel.SetSizerAndFit(fgs)
 			self.Fit()
 	
+	def onIcon(self,event,tamx=10,tamy=10):
+		im = Image.open(self.filename)
+		# p1 = (x1,y1),p2=(x2,y2) donde lo recortado es un rectangulo con esq opuestas p1 y p2
+		# itero x con i , y se queda fija, esto mientras haya bloques de x, ie tamx*iteracion < anchodela imagen
+		# luego reinicio x a 0 y aumento y por el tam del bloque
+		nbloqx = im.width / tamx
+		nbloqy = im.height / tamy
+		xant = 0
+		yant = 0
+		for by in range(0,nbloqy):
+			for bx in range(0,nbloqx):
+				#print "(%d,%d) -> %d,%d,%d,%d" % (bx,by,xant,yant,xant+tamx,yant+tamy)
+				box = (xant,yant,xant+tamx,yant+tamy)
+				region = im.crop(box)
+				region = region.transpose(Image.ROTATE_180)
+				self.icon_aux(region)
+				#region = mosaico_aux(region)
+				im.paste(region, box)
+				xant+=tamx
+			xant = 0
+			yant+=tamy
+		# convertimos la imagen de pil a raster
+		image = wx.EmptyImage(im.size[0], im.size[1])
+		new_image = im.convert('RGB')
+		data = new_image.tobytes()
+		image.SetData(data)
+		# fin conversion
+		fgs = wx.FlexGridSizer(cols=1, hgap=10, vgap=10)
+		sb1 = wx.StaticBitmap(self.panel, -1, wx.BitmapFromImage(image))
+		fgs.Add(sb1)
+		self.panel.SetSizerAndFit(fgs)
+		self.Fit()
+		self.Refresh()
+
+	def icon_aux(self,box):
+		pixels = box.load()
+		tambox =  box.width*box.height
+		r,g,b=(0,0,0)
+		for w in range(0, box.width):
+			for h in range(0, box.height):
+				r+= box.getpixel((w,h))[0]
+				g+= box.getpixel((w,h))[1]
+				b+= box.getpixel((w,h))[2]
+		r,g,b=(r/tambox,g/tambox,b/tambox)
+		for w in range(0, box.width):
+			for h in range(0, box.height):
+				pixels[w,h] = (r,g,b)
+			
 	def onRojo(self,event): self.filtroRGB(1,0,0)
 	def onVerde(self,event): self.filtroRGB(0,1,0)
-	def onAzul(self,event): self.filtroRGB(0,0,1)
-		
+	def onAzul(self,event): self.filtroRGB(0,0,1)	
 	def filtroRGB(self,rx,gx,bx):
 		im = Image.open(self.filename)
 		pixels = im.load()
@@ -92,11 +142,10 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()
-		
+	
 	def onGrisRojo(self,event):self.onGrisRGB(1,0,0)	
 	def onGrisVerde(self,event): self.onGrisRGB(0,1,0)
 	def onGrisAzul(self,event): self.onGrisRGB(0,0,1)
-		
 	def onGrisRGB(self,rx,gx,bx):
 		im = Image.open(self.filename)
 		pixels = im.load()
@@ -122,7 +171,6 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()
-		
 	def onGrisPromedio(self,event):
 		im = Image.open(self.filename)
 		pixels = im.load()
@@ -144,8 +192,7 @@ class MyForm(wx.Frame):
 		fgs.Add(sb1)
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
-		self.Refresh()
-		
+		self.Refresh()	
 	def onGrisEcuacion(self,event):
 		im = Image.open(self.filename)
 		pixels = im.load()
@@ -203,7 +250,6 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()
-
 	def mosaico_aux(self,box):
 		pixels = box.load()
 		tambox =  box.width*box.height
