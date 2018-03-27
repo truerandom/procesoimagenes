@@ -46,6 +46,9 @@ class MyForm(wx.Frame):
 		# mosaico
 		mosaicoMenuItem = filtrosMenu.Append(wx.NewId(), "Mosaico","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onMosaico,mosaicoMenuItem)
+		# onImgLetrasBN
+		imgletrasbnMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetrasBN","Open Image")	
+		self.Bind(wx.EVT_MENU, self.onImgLetrasBN,imgletrasbnMenuItem)
 		
 		menuBar.Append(fileMenu, "&Archivos")
 		menuBar.Append(filtrosMenu, "&Filtros")
@@ -65,7 +68,7 @@ class MyForm(wx.Frame):
 			self.panel.SetSizerAndFit(fgs)
 			self.Fit()
 	
-	def onIcon(self,event,tamx=10,tamy=10):
+	def onIcon(self,event,tamx=15,tamy=15):
 		im = Image.open(self.filename)
 		# p1 = (x1,y1),p2=(x2,y2) donde lo recortado es un rectangulo con esq opuestas p1 y p2
 		# itero x con i , y se queda fija, esto mientras haya bloques de x, ie tamx*iteracion < anchodela imagen
@@ -98,7 +101,7 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()
-
+		
 	def icon_aux(self,box):
 		pixels = box.load()
 		tambox =  box.width*box.height
@@ -171,6 +174,7 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()
+		
 	def onGrisPromedio(self,event):
 		im = Image.open(self.filename)
 		pixels = im.load()
@@ -193,6 +197,7 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()	
+		
 	def onGrisEcuacion(self,event):
 		im = Image.open(self.filename)
 		pixels = im.load()
@@ -250,6 +255,7 @@ class MyForm(wx.Frame):
 		self.panel.SetSizerAndFit(fgs)
 		self.Fit()
 		self.Refresh()
+		
 	def mosaico_aux(self,box):
 		pixels = box.load()
 		tambox =  box.width*box.height
@@ -263,7 +269,51 @@ class MyForm(wx.Frame):
 		for w in range(0, box.width):
 			for h in range(0, box.height):
 				pixels[w,h] = (r,g,b)
-			
+	
+	def onImgLetrasBN(self,event):
+		im = Image.open(self.filename)
+		pixels = im.load()
+		htmlcode=''
+		for h in range(0, im.height):
+			for w in range(0, im.width):
+				r= im.getpixel((w,h))[0]
+				g= im.getpixel((w,h))[1]
+				b= im.getpixel((w,h))[2]
+				#actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+				prom = int((r+ g+ b  )/3)
+				if 0 <= prom <= 15: htmlcode+='M'
+				if 16 <= prom <= 31: htmlcode+='N'
+				if 32 <= prom <= 47: htmlcode+='H'
+				if 48 <= prom <= 63: htmlcode+='#'
+				if 64 <= prom <= 79: htmlcode+='Q'
+				if 80 <= prom <= 95: htmlcode+='U'
+				if 96 <= prom <= 111: htmlcode+='A'
+				if 112 <= prom <= 127: htmlcode+='D'
+				if 128 <= prom <= 143: htmlcode+='0'
+				if 144 <= prom <= 159: htmlcode+='Y'
+				if 160 <= prom <= 175: htmlcode+='2'
+				if 176 <= prom <= 191: htmlcode+='$'
+				if 192 <= prom <= 209: htmlcode+='%'
+				if 210 <= prom <= 225: htmlcode+='+'
+				if 226 <= prom <= 239: htmlcode+='.'
+				if 240 <= prom <= 255: htmlcode+=' ' 
+				if w == im.width-1:
+					htmlcode+='\n'
+		print htmlcode
+		"""
+		# convertimos la imagen de pil a raster
+		image = wx.EmptyImage(im.size[0], im.size[1])
+		new_image = im.convert('RGB')
+		data = new_image.tobytes()
+		image.SetData(data)
+		# fin conversion
+		fgs = wx.FlexGridSizer(cols=1, hgap=10, vgap=10)
+		sb1 = wx.StaticBitmap(self.panel, -1, wx.BitmapFromImage(image))
+		fgs.Add(sb1)
+		self.panel.SetSizerAndFit(fgs)
+		self.Fit()
+		self.Refresh()
+		"""
 if __name__ == "__main__":
 	app = wx.App(False)
 	frame = MyForm().Show()
