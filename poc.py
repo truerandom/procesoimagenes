@@ -46,9 +46,9 @@ class MyForm(wx.Frame):
 		# mosaico
 		mosaicoMenuItem = filtrosMenu.Append(wx.NewId(), "Mosaico","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onMosaico,mosaicoMenuItem)
-		# onImgLetrasBN
-		imgletrasbnMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetrasBN","Open Image")	
-		self.Bind(wx.EVT_MENU, self.onImgLetrasBN,imgletrasbnMenuItem)
+		# onImgLetrasGrises
+		imgletrasgrisesMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetrasGrises","Open Image")	
+		self.Bind(wx.EVT_MENU, self.onImgLetrasGrises,imgletrasgrisesMenuItem)
 		
 		menuBar.Append(fileMenu, "&Archivos")
 		menuBar.Append(filtrosMenu, "&Filtros")
@@ -270,10 +270,10 @@ class MyForm(wx.Frame):
 			for h in range(0, box.height):
 				pixels[w,h] = (r,g,b)
 	
-	def onImgLetrasBN(self,event):
+	def onImgLetrasGrises(self,event):
 		im = Image.open(self.filename)
 		pixels = im.load()
-		htmlcode=''
+		htmlcode='<html><head><style>body { line-height: 0; white-space: pre; font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; }</style></head><body>\n'
 		for h in range(0, im.height):
 			for w in range(0, im.width):
 				r= im.getpixel((w,h))[0]
@@ -298,8 +298,12 @@ class MyForm(wx.Frame):
 				if 226 <= prom <= 239: htmlcode+='.'
 				if 240 <= prom <= 255: htmlcode+=' ' 
 				if w == im.width-1:
-					htmlcode+='\n'
-		print htmlcode
+					htmlcode+='\n<p>'
+		htmlcode+='\n</body><html>'
+		with open(self.filename+'.html', 'w') as f:
+			print >> f, htmlcode
+			print 'Archivo generado'
+		
 		"""
 		# convertimos la imagen de pil a raster
 		image = wx.EmptyImage(im.size[0], im.size[1])
