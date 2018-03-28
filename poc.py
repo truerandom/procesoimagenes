@@ -55,7 +55,9 @@ class MyForm(wx.Frame):
 		# onImgLetraColor
 		imgletracolorMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetraColor","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onImgLetraColor,imgletracolorMenuItem)
-		
+		# onNaipes
+		naipesMenuItem = filtrosMenu.Append(wx.NewId(), "Naipes","Open Image")	
+		self.Bind(wx.EVT_MENU, self.onNaipes,naipesMenuItem)
 		menuBar.Append(fileMenu, "&Archivos")
 		menuBar.Append(filtrosMenu, "&Filtros")
 		self.SetMenuBar(menuBar)
@@ -362,7 +364,41 @@ class MyForm(wx.Frame):
 		with open(self.filename+'.html', 'w') as f:
 			print >> f, htmlcode
 			print 'Archivo generado'
-
+	
+	def onNaipes(self,event):
+		im = Image.open(self.filename)
+		pixels = im.load()
+		htmlcode='<html><head><style>body { line-height: 0; white-space: pre; font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; }</style></head><body>\n'
+		for h in range(0, im.height):
+			for w in range(0, im.width):
+				r= im.getpixel((w,h))[0]
+				g= im.getpixel((w,h))[1]
+				b= im.getpixel((w,h))[2]
+				#actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+				prom = int((r+ g+ b  )/3)
+				if 0 <= prom <= 15: htmlcode+='&#127074;'
+				if 16 <= prom <= 31: htmlcode+='&#127123;'
+				if 32 <= prom <= 47: htmlcode+='&#127122;'
+				if 48 <= prom <= 63: htmlcode+='&#127115;'
+				if 64 <= prom <= 79: htmlcode+='&#127114;'
+				if 80 <= prom <= 95: htmlcode+='&#127107;'
+				if 96 <= prom <= 111: htmlcode+='&#127106;'
+				if 112 <= prom <= 127: htmlcode+='&#127099;'
+				if 128 <= prom <= 143: htmlcode+='&#127099;'
+				if 144 <= prom <= 159: htmlcode+='&#127098;'
+				if 160 <= prom <= 175: htmlcode+='&#127091;'
+				if 176 <= prom <= 191: htmlcode+='&#127090;'
+				if 192 <= prom <= 209: htmlcode+='&#127083;'
+				if 210 <= prom <= 225: htmlcode+='&#127082;'
+				if 226 <= prom <= 239: htmlcode+='&#127075;'
+				if 240 <= prom <= 255: htmlcode+='&#127075;' 
+				if w == im.width-1:
+					htmlcode+='\n<p>'
+		htmlcode+='\n</body><html>'
+		with open(self.filename+'.html', 'w') as f:
+			print >> f, htmlcode
+			print 'Archivo generado'
+		
 if __name__ == "__main__":
 	app = wx.App(False)
 	frame = MyForm().Show()
