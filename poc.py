@@ -52,6 +52,9 @@ class MyForm(wx.Frame):
 		# onImgLetraGris
 		imgletragrisMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetraGris","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onImgLetraGris,imgletragrisMenuItem)
+		# onImgLetraColor
+		imgletracolorMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetraColor","Open Image")	
+		self.Bind(wx.EVT_MENU, self.onImgLetraColor,imgletracolorMenuItem)
 		
 		menuBar.Append(fileMenu, "&Archivos")
 		menuBar.Append(filtrosMenu, "&Filtros")
@@ -334,6 +337,25 @@ class MyForm(wx.Frame):
 				if 210 <= prom <= 225: htmlcode+='<font color="#D8D8D8">@</font>'
 				if 226 <= prom <= 239: htmlcode+='<font color="#E8E8E8">@</font>'
 				if 240 <= prom <= 255: htmlcode+='<font color="#F8F8F8">@</font>' 
+				if w == im.width-1:
+					htmlcode+='\n<p>'
+		htmlcode+='\n</body><html>'
+		with open(self.filename+'.html', 'w') as f:
+			print >> f, htmlcode
+			print 'Archivo generado'
+			
+	def onImgLetraColor(self,event):
+		im = Image.open(self.filename)
+		pixels = im.load()
+		htmlcode='<html><head><style>body { line-height: 0; white-space: pre; font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; }</style></head><body>\n'
+		for h in range(0, im.height):
+			for w in range(0, im.width):
+				r= im.getpixel((w,h))[0]
+				g= im.getpixel((w,h))[1]
+				b= im.getpixel((w,h))[2]
+				#actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+				prom = '#%02x%02x%02x' % (r, g, b)
+				htmlcode+='<font color="%s">@</font>' % (prom)
 				if w == im.width-1:
 					htmlcode+='\n<p>'
 		htmlcode+='\n</body><html>'
