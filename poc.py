@@ -55,9 +55,13 @@ class MyForm(wx.Frame):
 		# onImgLetraColor
 		imgletracolorMenuItem = filtrosMenu.Append(wx.NewId(), "ImgLetraColor","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onImgLetraColor,imgletracolorMenuItem)
+		# onDomino
+		dominoMenuItem = filtrosMenu.Append(wx.NewId(), "Domino","Open Image")	
+		self.Bind(wx.EVT_MENU, self.onDomino,dominoMenuItem)
 		# onNaipes
 		naipesMenuItem = filtrosMenu.Append(wx.NewId(), "Naipes","Open Image")	
 		self.Bind(wx.EVT_MENU, self.onNaipes,naipesMenuItem)
+		
 		menuBar.Append(fileMenu, "&Archivos")
 		menuBar.Append(filtrosMenu, "&Filtros")
 		self.SetMenuBar(menuBar)
@@ -365,7 +369,7 @@ class MyForm(wx.Frame):
 			print >> f, htmlcode
 			print 'Archivo generado'
 	
-	def onNaipes(self,event):
+	def onDomino(self,event):
 		im = Image.open(self.filename)
 		pixels = im.load()
 		htmlcode='<html><head><style>body { line-height: 0; white-space: pre; font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; }</style></head><body>\n'
@@ -392,6 +396,42 @@ class MyForm(wx.Frame):
 				if 210 <= prom <= 225: htmlcode+='&#127082;'
 				if 226 <= prom <= 239: htmlcode+='&#127075;'
 				if 240 <= prom <= 255: htmlcode+='&#127075;' 
+				if w == im.width-1:
+					htmlcode+='\n<p>'
+		htmlcode+='\n</body><html>'
+		with open(self.filename+'.html', 'w') as f:
+			print >> f, htmlcode
+			print 'Archivo generado'
+			
+	def onNaipes(self,event):
+		im = Image.open(self.filename)
+		pixels = im.load()
+		htmlcode='<html><head><style>body { line-height: 0; white-space: pre; font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; }</style></head><body>\n'
+		for h in range(0, im.height):
+			for w in range(0, im.width):
+				r= im.getpixel((w,h))[0]
+				g= im.getpixel((w,h))[1]
+				b= im.getpixel((w,h))[2]
+				#actual = (data[i]*0.3 + data[i+1]*0.59 + data[i+2]*0.11) / 3
+				prom = int((r+ g+ b  )/3)
+				# &#127178;
+				prom = int((r+ g+ b  )/3)
+				if 0 <= prom <= 15: htmlcode+='<font color="#000000">&#127178;</font>'
+				if 16 <= prom <= 31: htmlcode+='<font color="#101010">&#127178;</font>'
+				if 32 <= prom <= 47: htmlcode+='<font color="#202020">&#127178;</font>'
+				if 48 <= prom <= 63: htmlcode+='<font color="#303030">&#127178;</font>'
+				if 64 <= prom <= 79: htmlcode+='<font color="#404040">&#127178;</font>'
+				if 80 <= prom <= 95: htmlcode+='<font color="#505050">&#127178;</font>'
+				if 96 <= prom <= 111: htmlcode+='<font color="#606060">&#127178;</font>'
+				if 112 <= prom <= 127: htmlcode+='<font color="#696969">&#127178;</font>'
+				if 128 <= prom <= 143: htmlcode+='<font color="#787878">&#127178;</font>'
+				if 144 <= prom <= 159: htmlcode+='<font color="#909090">&#127178;</font>'
+				if 160 <= prom <= 175: htmlcode+='<font color="#A0A0A0">&#127178;</font>'
+				if 176 <= prom <= 191: htmlcode+='<font color="#B0B0B0">&#127178;</font>'
+				if 192 <= prom <= 209: htmlcode+='<font color="#C8C8C8">&#127178;</font>'
+				if 210 <= prom <= 225: htmlcode+='<font color="#D8D8D8">&#127178;</font>'
+				if 226 <= prom <= 239: htmlcode+='<font color="#E8E8E8">&#127178;</font>'
+				if 240 <= prom <= 255: htmlcode+='<font color="#F8F8F8">&#127178;</font>' 
 				if w == im.width-1:
 					htmlcode+='\n<p>'
 		htmlcode+='\n</body><html>'
