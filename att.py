@@ -30,6 +30,7 @@ def altocontraste(imagen):
 	#im.show()
 	return im
 
+"""
 def cuenta(box):
 	#print box
 	#print type(box)
@@ -46,7 +47,21 @@ def cuenta(box):
 				c_negros = c_negros+1
 	#print "total pix ",ancho*alto," negros ",c_negros
 	return c_negros
-	
+"""
+
+def centra(Nlineas,puntos):
+	acomodados = []
+	for tmp in range(0,Nlineas):
+		acomodados.append(False)
+	print 'puntos ',puntos
+	n = puntos / 2
+	if n % 2 ==1: m = n-1
+	else: m = n
+	print 'm ',m,' n ',n
+	for i in range(Nlineas/2 -n , Nlineas/2 + m):
+		acomodados[i] = True
+	return acomodados
+			
 # donde t es el tamanio del efecto
 def filtroatt(imagen,t):
 	imagen = Image.open(imagen)
@@ -54,36 +69,25 @@ def filtroatt(imagen,t):
 	imagen = tonogrises(imagen) # la imagen se convierte a tono de grises
 	imagen = altocontraste(imagen)	# le aplica alto contraste
 	im = imagen
+	ancho = imagen.width
+	alto = imagen.height
 	pixels = im.load()
-	xant = 0
-	yant = 0
-	nbloqx = im.width / t
-	nbloqy = im.height / t
-	for by in range(0,nbloqy):
-		for bx in range(0,nbloqx):
-			#print "(%d,%d) -> %d,%d,%d,%d" % (bx,by,xant,yant,xant+tamx,yant+tamy)
-			box = (xant,yant,xant+t,yant+t)
-			region = im.crop(box)
-			nnegras = cuenta(region)
-			nblancas = region.height*region.width - nnegras
-			print 'negros ',nnegras,' pblancas ',nblancas
-			if nblancas % 2 == 1:
-				prom = (nblancas -1) /2
-				res = 1
-			else:
-				prom = nblancas / 2
-				res = 0
-			# aqui hace una iteracion rara :,v
-			for w in range(0,region.width):
-				for h in range(0,region.width):
-					print "(%s,%s)" % (w+xant,h+yant)
-					print "prom %s res %s " % (prom,res)
-								
-			#region = mosaico_aux(region)
-			im.paste(region, box)
-			xant+=t
-		xant = 0
-		yant+=t
+	Nlineas = 15
+	for i in range(0,ancho):
+		for j in range(0,alto-Nlineas,Nlineas):
+			puntos = 0
+			print 'j+Nlineas ',j+Nlineas
+			for y in range(j,(j+Nlineas)):
+				if im.getpixel((i,y))[0] == 0:
+					puntos = puntos + 1
+			acomodados = centra(Nlineas,puntos)
+			print acomodados
+			for y in range(j,j+Nlineas):
+				if acomodados[y-j]:
+					pixels[i,y] = (0,0,0)
+				else:
+					pixels[i,y] = (255,255,255)
+			#print im.getpixel((i,j))
 	im.show()
 	return im
 	#ancho = imagen.
